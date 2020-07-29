@@ -99,7 +99,7 @@ void transmit(const Options& opt)
   }
 
   printf("connecting to %s\n", addr.toIpPort().c_str());
-  TcpStreamPtr stream(TcpStream::connect(addr));
+  TcpStreamPtr stream(TcpStream::connect(addr));//对象自动构造
   if (!stream)
   {
     printf("Unable to connect %s\n", addr.toIpPort().c_str());
@@ -107,7 +107,7 @@ void transmit(const Options& opt)
     return;
   }
 
-  if (opt.nodelay)
+  if (opt.nodelay)//TCP本身的ack，不是应用层的
   {
     stream->setTcpNoDelay(true);
   }
@@ -124,7 +124,7 @@ void transmit(const Options& opt)
 
   const int total_len = sizeof(int32_t) + opt.length;
   PayloadMessage* payload = static_cast<PayloadMessage*>(::malloc(total_len));
-  std::unique_ptr<PayloadMessage, void (*)(void*)> freeIt(payload, ::free);
+  std::unique_ptr<PayloadMessage, void (*)(void*)> freeIt(payload, ::free);//对象不存在的时候，自动析构
   assert(payload);
   payload->length = htonl(opt.length);
   for (int i = 0; i < opt.length; ++i)
